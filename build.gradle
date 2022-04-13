@@ -1,0 +1,51 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		google()
+		gradlePluginPortal()
+		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'https://jitpack.io' }
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+	}
+}
+
+import groovy.json.JsonSlurper
+
+allprojects {
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+
+	def jsonFile = file(rootProject.file('assets').path + '/version.json')
+	def parsedJson = new JsonSlurper().parseText(jsonFile.text)
+
+	version = parsedJson.version
+
+	ext {
+		appName = parsedJson.projectName.replace(" ", "-")
+	}
+}
+
+configure(subprojects) {
+	apply plugin: 'java-library'
+	apply plugin: 'kotlin'
+	compileJava {
+		options.incremental = true
+	}
+}
+
+subprojects {
+	version = '0.0.1'
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		gradlePluginPortal()
+		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'https://jitpack.io' }
+	}
+}
+
+eclipse.project.name = 'test' + '-parent'
+

@@ -1,0 +1,35 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
+
+sourceSets {
+	main {
+		java {
+			srcDirs += "src/"
+		}
+	}
+}
+
+dependencies {
+	api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+	api "com.badlogicgames.gdx:gdx:$gdxVersion"
+	api "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+	api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+	api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+	api("com.badlogicgames.gdx:gdx-tools:$gdxVersion") {
+		exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl3'
+		exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'
+	}
+	api "com.badlogicgames.gdx:gdx-controllers:1.9.13"
+	api "com.kotcrab.vis:vis-ui:$visUiVersion"
+	api "space.earlygrey:shapedrawer:$shapeDrawerVersion"
+	api "io.github.libktx:ktx-collections:$ktxVersion"
+	api "io.github.libktx:ktx-actors:$ktxVersion"
+	api "io.github.libktx:ktx-math:$ktxVersion"
+	api "uk.co.electronstudio.sdl2gdx:sdl2gdx:$sdl2gdxVersion"
+	api "com.github.rafaskb.parrot:core:f5b6ddbe93e258c85e4ce17c48b674d2ff8cb7a6"
+	api "com.rafaskoberg.gdx:typing-label:$typingLabelVersion"
+	api "com.github.dcostap:typing-label-generic:$typingLabelGenericVersion"
+	api "com.github.mgsx-dev.gdx-gltf:gltf:$gltfVersion"
+	api 'me.xdrop:fuzzywuzzy:1.3.1'
+	api "com.crashinvaders.vfx:gdx-vfx-core:$gdxVfxCoreVersion"
+}
