@@ -9,14 +9,14 @@ import dev.dcostap.AssetsExporter
 
 /** Launches the desktop (LWJGL3) application.  */
 object DesktopLauncher {
-
+	@JvmStatic
     fun main(arg: Array<String>) {
         Main.launchDesktopApp()
     }
 }
 
 object UpdateAssets {
-
+	@JvmStatic
     fun main(arg: Array<String>) {
         val config = Lwjgl3ApplicationConfiguration().apply {
             setWindowedMode(10, 10)
