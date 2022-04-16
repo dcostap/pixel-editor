@@ -1,9 +1,8 @@
 package dev.dcostap.editor
 
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.math.Affine2
-import com.badlogic.gdx.math.Matrix3
-import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.*
 import com.badlogic.gdx.utils.DelayedRemovalArray
 import com.badlogic.gdx.utils.SnapshotArray
 import dev.dcostap.Drawer2D
@@ -15,7 +14,32 @@ open class ElementUI : Transformable by Transform() {
 	var color = Color.WHITE
 	var alpha = 1f
 
-	private val children = DelayedRemovalArray<ElementUI>()
+	var depth = 0
+
+	val size = Rectangle()
+
+	val root: RootUI?
+		get() = (parent as? RootUI) ?: parent?.root
+
+	val children = DelayedRemovalArray<ElementUI>()
+
+	private val tmpVec = Vector2()
+
+	fun calculateAbsolutePosition(): Vector2 {
+		tmpVec.set(position)
+		parent?.let {
+			tmpVec.add(it.calculateAbsolutePosition())
+		}
+		return tmpVec
+	}
+
+	fun calculateAbsoluteScale(): Vector2 {
+		tmpVec.set(scale)
+		parent?.let {
+			tmpVec.add(it.calculateAbsoluteScale())
+		}
+		return tmpVec
+	}
 
 	fun add(elementUI: ElementUI) {
 		children.add(elementUI)
@@ -32,8 +56,8 @@ open class ElementUI : Transformable by Transform() {
 	var parent: ElementUI? = null
 
 	open fun update(delta: Float) {
-		for (child in children)
-			child.update(delta)
+		sortChildren()
+		for (child in children) child.update(delta)
 	}
 
 	private var transform = Matrix4()
@@ -69,12 +93,22 @@ open class ElementUI : Transformable by Transform() {
 	}
 
 	open fun drawSelf(drawer: Drawer2D) {
-		drawer.drawRectangle(0f, 0f, 40f, 40f, true)
+
 	}
 
 	open fun drawChildren(drawer: Drawer2D, parentAlpha: Float) {
+		sortChildren()
+
 		for (child in children) {
 			child.draw(drawer, parentAlpha)
 		}
+	}
+
+	open fun onTouchDown(): Boolean {
+		return false
+	}
+
+	private fun sortChildren() {
+		children.sort { e1, e2 -> e1.depth.compareTo(e2.depth) }
 	}
 }

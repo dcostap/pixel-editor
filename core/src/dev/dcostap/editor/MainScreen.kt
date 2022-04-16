@@ -1,15 +1,15 @@
 package dev.dcostap.editor
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.g2d.CpuSpriteBatch
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import dev.dcostap.Assets2D
 import dev.dcostap.Drawer2D
 import dev.dcostap.utils.Utils
 import dev.dcostap.utils.setXY
 import dev.dcostap.utils.use
-import ktx.collections.*
-import ktx.math.minus
 import java.lang.Math.sin
 
 class MainScreen : ScreenAdapter() {
@@ -20,23 +20,20 @@ class MainScreen : ScreenAdapter() {
 
 	var elapsed = 0f
 
-	val ui = ElementUI().also {
-		it.x = 500f
-		it.y = 400f
+	val ui = RootUI(viewport)
 
-		it.add(object : ElementUI() {
-			init {
-				x = 60f
-				y = 100f
-			}
+	init {
+		viewport.unitsPerPixel = 0.25f
 
-			override fun update(delta: Float) {
-				super.update(delta)
+		ui.let {
+			it.add(ImageUI(Assets2D.getRegion("cursor")))
 
-				origin.x += sin(elapsed.toDouble()).toFloat()
-				rotation += 5f
-			}
-		})
+			it.add(ButtonUI(100f, 100f, Assets2D.getNinePatch("button")))
+		}
+
+//		ui.scale.setXY(3f)
+
+		Gdx.input.inputProcessor = ui
 	}
 
 	override fun render(delta: Float) {
@@ -49,6 +46,10 @@ class MainScreen : ScreenAdapter() {
 		ui.update(delta)
 	}
 
+	companion object {
+		var debugText = ""
+	}
+
 	private fun draw(delta: Float) {
 		Utils.clearScreen()
 
@@ -58,8 +59,15 @@ class MainScreen : ScreenAdapter() {
 		batch.use {
 			drawer.batch = it
 			ui.draw(drawer, 1f)
-			ui.rotation += 1f
-			ui.scale.setXY(sin(elapsed.toDouble()).toFloat())
+
+			drawer.drawText(
+				debugText,
+				Assets2D.visSmallFont,
+				Gdx.input.x.toFloat(),
+				Gdx.graphics.height - Gdx.input.y.toFloat()
+			)
+
+			debugText = ""
 		}
 	}
 
